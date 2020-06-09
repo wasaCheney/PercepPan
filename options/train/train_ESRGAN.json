@@ -1,0 +1,112 @@
+{
+  "name": "RRDB_ESRGAN_x4_QuickBird" //  please remove "debug_" during training
+  , "use_vis_logger": true
+  , "model":"srragan"
+  , "scale": 4
+  , "gpu_ids": [0]
+
+  , "datasets": {
+    "train": {
+      "name": "QuickBird"
+      , "mode": "LRHR"
+      , "dataroot_HR": "data/opticalRSI/QuickBird/train.lmdb/"
+      , "dataroot_LR": "data/opticalRSI/QuickBird/train.lmdb/"
+      , "subset_file": null
+      , "use_shuffle": true
+      , "n_workers": 0  // half of your cpu threads, 2**n, laptop works abnormally
+      , "batch_size": 4  // multiple of n_workers
+      , "HR_size": 256
+      , "use_flip": true
+      , "use_rot": true
+    }
+    , "val": {
+      "name": "QuickBird"
+      , "mode": "LRHR"
+      , "dataroot_HR": "data/opticalRSI/QuickBird/val.lmdb/"
+      , "dataroot_LR": "data/opticalRSI/QuickBird/val.lmdb/"
+    }
+  }
+
+  , "path": {
+    "root": "code/BasicSR"
+    , "resume_state": null
+    , "pretrain_model_G": "code/BasicSR/experiments/pretrained_models/RRDB_ESRGAN_x4_no_0_10.pth"
+  }
+
+  , "network_G": {
+    "which_model_G": "RRDB_net" // RRDB_net | sr_resnet
+    , "norm_type": null
+    , "mode": "CNA"
+    , "nf": 64
+    , "nb": 23
+    , "in_nc": 4
+    , "out_nc": 8
+    , "gc": 32  // growth channel for DenseBlock
+    , "group": 1
+  }
+
+  , "network_R": {
+    "which_model_R": "CONV_net" // CONV_net
+    , "norm_type": null
+    , "mode": "CNA"
+    , "lm_nc": 4
+    , "pan_nc": 1
+    , "group": 1
+  }
+
+  , "network_D": {
+    "which_model_D": "discriminator_vgg_64_256"
+    , "norm_type": "batch"
+    , "act_type": "leakyrelu"
+    , "mode": "CNA"
+    , "nf": 64
+    , "lm_nc": 4
+    , "pan_nc": 1
+  }
+
+  //, "network_D": {
+  //  "which_model_D": "discriminator_vgg_128"
+  //  , "norm_type": "batch"
+  //  , "act_type": "leakyrelu"
+  //  , "mode": "CNA"
+  //  , "nf": 64
+  //  , "in_nc": 3
+  //}
+
+  , "train": {
+    "lr_G": 1e-4
+    , "weight_decay_G": 0
+    , "beta1_G": 0.9
+    , "lr_R": 0 // 1e-6
+    , "weight_decay_R": 0
+    , "beta1_R": 0.9
+    , "lr_D": 1e-5
+    , "weight_decay_D": 0
+    , "beta1_D": 0.9
+    , "lr_scheme": "MultiStepLR"
+    , "lr_steps": [50000, 100000, 200000, 300000]
+    , "lr_gamma": 0.5
+
+    , "pixel_criterion": "l1"
+    , "pixel_weight": 1
+    , "feature_criterion": "l1"
+    , "feature_weight": 1
+    , "gan_type": "vanilla"
+    , "gan_weight": 1e-2
+
+    //for wgan-gp
+    // , "D_update_ratio": 1
+    // , "D_init_iters": 0
+    // , "gp_weigth": 10
+
+    , "manual_seed": 0
+    , "niter": 5e3
+    , "val_freq": 20
+    , "order": "GD_R" // G_RD GR_D GD_R
+  }
+
+  , "logger": {
+    "print_freq": 20
+    , "save_checkpoint_freq": 20
+  }
+}

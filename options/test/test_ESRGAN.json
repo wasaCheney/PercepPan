@@ -1,0 +1,52 @@
+{
+  "name": "RRDB_ESRGAN_x4_QuickBird"
+  , "suffix": "_ESRGAN"
+  , "use_vis_logger": false
+  , "model": "srragan"
+  , "scale": 4
+  , "gpu_ids": [0]
+
+  , "datasets": {
+//    "val_1": { // the 1st test dataset
+//      "name": "set5"
+//      , "mode": "LRHR"
+//      , "dataroot_HR": "data/classical_SR/Set5" // homedir is determined by platform
+//      , "dataroot_LR": null
+//    }
+//    , "val_2": { // the 2nd test dataset
+//      "name": "set14"
+//      , "mode": "LRHR"
+//      , "dataroot_HR": "data/classical_SR/Set14"
+//      , "dataroot_LR": null
+//    }
+      "val": { // the 3rd test dataset
+      "name": "IKONOS"
+      , "mode": "LRHR"
+      , "dataroot_HR": "data/opticalRSI/IKONOS/"
+      , "dataroot_LR": "data/opticalRSI/IKONOS/"
+    }
+  }
+
+  , "path": {
+    "root": "code/BasicSR"
+    , "pretrain_model_G": "code/BasicSR/experiments/pretrained_models/RRDB_ESRGAN_x4.pth"
+  }
+
+  , "network_G": {
+    "which_model_G": "RRDB_net" // RRDB_net | sr_resnet
+    , "norm_type": null
+    , "mode": "CNA"
+    , "nf": 64
+    , "nb": 23
+    , "in_nc": 4
+    , "out_nc": 8
+
+    , "gc": 32
+    , "group": 1
+  }
+
+  , "logger": {
+    "print_freq": 20
+    , "save_checkpoint_freq": 20
+  }
+}
